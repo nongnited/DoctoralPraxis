@@ -1,0 +1,131 @@
+# RAGShield — Shield Server Docker Compose
+# Runs 10 classifier containers on ports 8101-8110
+# Deploy on: shield (HP DL380 G9, bare metal)
+#
+# Usage:
+#   docker compose up -d
+#   docker compose ps
+#   docker compose logs -f naive_bayes
+
+version: "3.9"
+
+x-classifier-base: &classifier-base
+  build:
+    context: ./classifiers
+    dockerfile: Dockerfile
+  restart: unless-stopped
+  volumes:
+    - ${MODELS_PATH:-/opt/ragshield/models}:/models:ro
+  environment:
+    MODEL_PATH: /models
+    TFIDF_PATH: /models/tfidf_vectorizer.joblib
+
+x-bert-base: &bert-base
+  build:
+    context: ./classifiers
+    dockerfile: Dockerfile.bert
+  restart: unless-stopped
+  volumes:
+    - ${MODELS_PATH:-/opt/ragshield/models}:/models:ro
+  environment:
+    MODEL_PATH: /models
+
+services:
+
+  naive_bayes:
+    <<: *classifier-base
+    container_name: ragshield_naive_bayes
+    ports: ["8101:8080"]
+    environment:
+      MODEL_NAME: naive_bayes_tfidf_balanced
+      MODEL_PATH: /models
+      TFIDF_PATH: /models/tfidf_vectorizer.joblib
+      PORT: 8080
+
+  logistic_regression:
+    <<: *classifier-base
+    container_name: ragshield_logistic_regression
+    ports: ["8102:8080"]
+    environment:
+      MODEL_NAME: logistic_regression_tfidf_none
+      MODEL_PATH: /models
+      TFIDF_PATH: /models/tfidf_vectorizer.joblib
+      PORT: 8080
+
+  ridge:
+    <<: *classifier-base
+    container_name: ragshield_ridge
+    ports: ["8103:8080"]
+    environment:
+      MODEL_NAME: ridge_tfidf_none
+      MODEL_PATH: /models
+      TFIDF_PATH: /models/tfidf_vectorizer.joblib
+      PORT: 8080
+
+  random_forest:
+    <<: *classifier-base
+    container_name: ragshield_random_forest
+    ports: ["8104:8080"]
+    environment:
+      MODEL_NAME: random_forest_tfidf_none
+      MODEL_PATH: /models
+      TFIDF_PATH: /models/tfidf_vectorizer.joblib
+      PORT: 8080
+
+  extra_trees:
+    <<: *classifier-base
+    container_name: ragshield_extra_trees
+    ports: ["8105:8080"]
+    environment:
+      MODEL_NAME: extra_trees_tfidf_none
+      MODEL_PATH: /models
+      TFIDF_PATH: /models/tfidf_vectorizer.joblib
+      PORT: 8080
+
+  xgboost:
+    <<: *classifier-base
+    container_name: ragshield_xgboost
+    ports: ["8106:8080"]
+    environment:
+      MODEL_NAME: xgboost_tfidf_none
+      MODEL_PATH: /models
+      TFIDF_PATH: /models/tfidf_vectorizer.joblib
+      PORT: 8080
+
+  lightgbm:
+    <<: *classifier-base
+    container_name: ragshield_lightgbm
+    ports: ["8107:8080"]
+    environment:
+      MODEL_NAME: lightgbm_tfidf_none
+      MODEL_PATH: /models
+      TFIDF_PATH: /models/tfidf_vectorizer.joblib
+      PORT: 8080
+
+  svm:
+    <<: *classifier-base
+    container_name: ragshield_svm
+    ports: ["8108:8080"]
+    environment:
+      MODEL_NAME: svm_tfidf_none
+      MODEL_PATH: /models
+      TFIDF_PATH: /models/tfidf_vectorizer.joblib
+      PORT: 8080
+
+  bert_base:
+    <<: *bert-base
+    container_name: ragshield_bert_base
+    ports: ["8109:8080"]
+    environment:
+      MODEL_NAME: bert_base
+      MODEL_PATH: /models
+      PORT: 8080
+
+  securebert:
+    <<: *bert-base
+    container_name: ragshield_securebert
+    ports: ["8110:8080"]
+    environment:
+      MODEL_NAME: securebert
+      MODEL_PATH: /models
+      PORT: 8080

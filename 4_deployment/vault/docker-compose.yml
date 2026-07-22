@@ -1,0 +1,46 @@
+# RAGShield — Vault Server Docker Compose
+# Runs FastAPI RAG gateway + ChromaDB
+# Deploy on: vault (Proxmox VM, 10.0.0.107)
+
+version: "3.9"
+
+services:
+  fastapi:
+    build: ./backend
+    container_name: ragshield_vault
+    ports:
+      - "8080:8080"
+    environment:
+      CHROMADB_HOST: chromadb
+      CHROMADB_PORT: 8000
+      CHROMA_COLLECTION: ragshield_docs
+      SHIELD_HOST: ${SHIELD_HOST:-10.0.0.108}
+      SHIELD_PORT: ${SHIELD_PORT:-8101}
+      ARBITER_HOST: ${ARBITER_HOST:-10.0.0.109}
+      ARBITER_PORT: ${ARBITER_PORT:-11434}
+      LEDGER_HOST: ${LEDGER_HOST:-10.0.0.110}
+      LEDGER_PORT: ${LEDGER_PORT:-5432}
+      POSTGRES_DB: ${POSTGRES_DB:-ragshield}
+      POSTGRES_USER: ${POSTGRES_USER:-ragshield_app}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ragshield2025}
+      CHUNK_SIZE: ${CHUNK_SIZE:-100}
+      LLM_MODEL: ${LLM_MODEL:-llama3.1:8b}
+      EMBED_MODEL: ${EMBED_MODEL:-nomic-embed-text}
+    depends_on:
+      - chromadb
+    restart: unless-stopped
+
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: ragshield_chromadb
+    ports:
+      - "8000:8000"
+    volumes:
+      - chromadb_data:/chroma/chroma
+    environment:
+      IS_PERSISTENT: "TRUE"
+      PERSIST_DIRECTORY: /chroma/chroma
+    restart: unless-stopped
+
+volumes:
+  chromadb_data:
