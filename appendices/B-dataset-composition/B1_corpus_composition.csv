@@ -1,0 +1,4 @@
+split,total,benign,benign_pct,injection,injection_pct
+Full corpus,1632973,1137861,69.7,495112,30.3
+Training (80%),1306378,910289,69.7,396089,30.3
+Validation (20%),326595,227572,69.7,99023,30.3

@@ -1,0 +1,8 @@
+attack_surface,injection_source,est_injection_examples_pre_dedup,pct_of_injection,aligned_benign_domain,benign_examples,pct_of_benign,difference_pp
+Email,BIPIA (Email QA),19000,3.6,Enron + AESLC,133321,11.7,-8.1
+Webpage,BIPIA (Web QA),54000,10.1,Wikipedia + CNN/DailyMail,311898,27.4,-17.3
+Table / structured,BIPIA (Table QA),54000,10.1,StackExchange,117234,10.3,-0.2
+Document / abstract,BIPIA (Summarization),54000,10.1,arXiv + Legal,390170,34.3,-24.2
+Code,BIPIA (Code QA),19000,3.6,StackExchange (code),included in StackExchange,,3.6
+Financial,,0,0.0,Financial sources,185238,16.3,-16.3
+General adversarial,LLMail-Inject + Tensor Trust,333000,62.5,,0,0.0,62.5
